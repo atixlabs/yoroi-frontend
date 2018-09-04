@@ -27,12 +27,12 @@ jobs:
       - run: sudo chown -R "$(whoami):$(whoami)" /usr/local/lib/node_modules
       
       - restore_cache:
-          key: dependency-cache-{{ checksum "js-cardano-wasm/package-lock.json" }}            
+          key: dependency-cache-{{ .Environment.CARDANO_WASM_COMMIT }}
       - run: npm run build-js-cardano-wasm
       - save_cache:
-          key: dependency-cache-{{ checksum "js-cardano-wasm/package-lock.json" }}
+          key: dependency-cache-{{ .Environment.CARDANO_WASM_COMMIT }}
           paths:
-            - js-cardano-wasm/dist
+            - js-cardano-wasm
             
       - restore_cache:
           key: dependency-cache-{{ checksum "package-lock.json" }}      
@@ -53,10 +53,10 @@ jobs:
 
       # Persist the specified paths (~/repo) into the workspace for use in downstream job. 
       # FIXME:
-      #- persist_to_workspace:
-      #    root: ~/
-      #    paths:
-      #      - ./repo/yoroi.zip
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - ./repo/yoroi.zip
 
   deploy-testnet:
     working_directory: ~/repo
