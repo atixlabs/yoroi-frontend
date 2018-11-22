@@ -20,7 +20,7 @@
     [
       "@babel/plugin-transform-runtime",
       {
-        "polyfill": false,
+        "corejs": 2,
         "helpers": true,
         "regenerator": true
       }
