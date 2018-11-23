@@ -1,3 +1,10 @@
+/**
+ * We need to use this hack. Which copies the mobx flow types in a new file so we can modify it, 
+ * while ignoring the default one that comes in the library. We need to do this in order to avoid
+ * the problem that the type Iterator of mobx uses the same same as the one from Flow, provoking
+ * *a lot* of issues in Flow. More info: https://medium.com/@xiaoyangzhao/mobx-and-flow-typed-1d411a7b47fb
+ */
+
 declare module 'mobx' {
 
   declare export type Extras = {
