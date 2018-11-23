@@ -15,7 +15,7 @@ import translations from './i18n/translations';
 import type { StoresMap } from './stores/index';
 import type { ActionsMap } from './actions/index';
 import ThemeManager from './ThemeManager';
-import { hot } from 'react-hot-loader'
+import { hot } from 'react-hot-loader';
 
 // https://github.com/yahoo/react-intl/wiki#loading-locale-data
 addLocaleData([...en, ...ko, ...ja, ...zh, ...ru]);
@@ -56,4 +56,4 @@ class App extends Component<{
   }
 }
 
-export default hot(module)(App)
+export default hot(module)(App);
