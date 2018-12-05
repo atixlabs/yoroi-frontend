@@ -260,7 +260,7 @@
   "wallet.trezor.dialog.step.save.error.101": "保存に失敗しました。インターネット接続を確認して再試行してください。",
   "wallet.trezor.dialog.step.save.label": "保存",
   "wallet.trezor.dialog.step.save.walletName.hint": "ウォレット名を入力",
-  "wallet.trezor.dialog.step.save.walletName.info": "We have fetched the Trezor device’s name for you. You can use as it is, or assign a different name.",
+  "wallet.trezor.dialog.step.save.walletName.info": "Trezorデバイス名を読み出しました。このまま使用するか、任意の名前を入力してください。",
   "wallet.trezor.dialog.step.save.walletName.label": "ウォレット名",
-  "wallet.trezor.dialog.title.label": "CONNECT TO TREZOR HARDWARE WALLET"
+  "wallet.trezor.dialog.title.label": "Trezorハードウェアウォレットに接続"
 }
