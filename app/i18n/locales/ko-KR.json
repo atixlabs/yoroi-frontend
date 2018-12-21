@@ -238,7 +238,7 @@
   "wallet.trezor.dialog.connect.button.label": "연결",
   "wallet.trezor.dialog.next.button.label": "다음",
   "wallet.trezor.dialog.save.button.label": "저장",
-  "wallet.trezor.dialog.step.about.introText.line.1": "A hardware wallet is a small USB device that adds an extra level of security to your wallet.",
+  "wallet.trezor.dialog.step.about.introText.line.1": "하드웨어 지갑은 작은 USB장치로, 지갑의 보안성을 높입니다.",
   "wallet.trezor.dialog.step.about.introText.line.2": "비밀키가 하드웨어 지갑에 남지 않으므로, 더 높은 안전성을 보장합니다.",
   "wallet.trezor.dialog.step.about.introText.line.3": "하드웨어 지갑은 컴퓨터가 피싱 시도, 말웨어 등으로 인해 손상되더라도 자금을 안전하게 보호합니다.",
   "wallet.trezor.dialog.step.about.label": "ABOUT",
