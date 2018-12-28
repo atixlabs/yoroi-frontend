@@ -1,4 +1,5 @@
 import pdfjsLib from 'pdfjs-dist';
+import { decryptForceVend, decryptRecoveryRegularVend, decryptRecoveryForceVend, decryptRegularVend } from './decrypt';
 
 export const getSelectedFile = event => event.target.files[0];
 
@@ -14,8 +15,30 @@ export const readFile = file =>
     } catch (error) {
       reject(error);
     }
-  })
-;
+  });
+
+export const decryptFile = (decryptionKey, redemptionType, file) => {
+  // If pass phrase is given assume that it's an encrypted certificate
+  if (decryptionKey) {
+    // Decrypt the file
+    let decryptedFile;
+    switch (redemptionType) {
+      case 'forceVended':
+        decryptedFile = decryptForceVend(decryptionKey, file);
+        break;
+      case 'recoveryRegular':
+        decryptedFile = decryptRecoveryRegularVend(decryptionKey, file);
+        break;
+      case 'recoveryForceVended':
+        decryptedFile = decryptRecoveryForceVend(decryptionKey, file);
+        break;
+      default: // regular
+        decryptedFile = decryptRegularVend(decryptionKey, file);
+    }
+    return decryptedFile;
+  }
+  return file;
+};
 
 // It was based in the following example: https://ourcodeworld.com/articles/read/405/how-to-convert-pdf-to-text-extract-text-from-pdf-with-javascript
 export const parsePDFFile = file => (
