@@ -1,20 +1,16 @@
 // @flow
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
-import { join } from 'lodash';
-import { isEmail, isEmpty } from 'validator';
 import classnames from 'classnames';
-import { Autocomplete } from 'react-polymorph/lib/components/Autocomplete';
 import Button from 'react-polymorph/lib/components/Button';
-import { Input } from 'react-polymorph/lib/components/Input';
+import Input from 'react-polymorph/lib/components/Input';
 import Select from 'react-polymorph/lib/components/Select';
-import { AutocompleteSkin } from 'react-polymorph/lib/skins/simple/AutocompleteSkin';
 import SimpleButtonSkin from 'react-polymorph/lib/skins/simple/raw/ButtonSkin';
-import { InputSkin } from 'react-polymorph/lib/skins/simple/InputSkin';
+import InputSkin from 'react-polymorph/lib/skins/simple/raw/InputSkin';
 import SelectSkin from 'react-polymorph/lib/skins/simple/raw/SelectSkin';
 import { defineMessages, intlShape, FormattedHTMLMessage } from 'react-intl';
 import ReactToolboxMobxForm from '../../../utils/ReactToolboxMobxForm';
-// import AdaCertificateUploadWidget from '../../widgets/forms/AdaCertificateUploadWidget';
+import AdaCertificateUploadWidget from '../../widgets/forms/AdaCertificateUploadWidget';
 // import AdaRedemptionDisclaimer from './AdaRedemptionDisclaimer';
 // import BorderedBox from '../../widgets/BorderedBox';
 import LocalizableError from '../../../i18n/LocalizableError';
@@ -244,24 +240,6 @@ export default class RegularAdaRedemption extends Component<Props> {
         placeholder: this.context.intl.formatMessage(messages.certificateHint),
         type: 'file',
       },
-      passPhrase: {
-        label: this.context.intl.formatMessage(messages.passphraseLabel),
-        placeholder: this.context.intl.formatMessage(messages.passphraseHint, {
-          length: ADA_REDEMPTION_PASSPHRASE_LENGTH
-        }),
-        value: [],
-        validators: [({ field }) => {
-          // Don't validate No pass phrase needed when certificate is not encrypted
-          if (!this.props.showPassPhraseWidget) return [true];
-          // Otherwise check mnemonic
-          const passPhrase = join(field.value, ' ');
-          if (!isEmpty(passPhrase)) this.props.onPassPhraseChanged(passPhrase);
-          return [
-            this.props.mnemonicValidator(passPhrase),
-            // this.context.intl.formatMessage(new InvalidMnemonicError())
-          ];
-        }]
-      },
       redemptionKey: {
         label: this.context.intl.formatMessage(messages.redemptionKeyLabel),
         value: '',
@@ -275,65 +253,9 @@ export default class RegularAdaRedemption extends Component<Props> {
           ];
         },
       },
-      shieldedRedemptionKey: {
-        label: this.context.intl.formatMessage(messages.shieldedRedemptionKeyLabel),
-        placeholder: this.context.intl.formatMessage(messages.shieldedRedemptionKeyHint),
-        value: '',
-        validators: ({ field }) => {
-          if (this.props.redemptionType !== ADA_REDEMPTION_TYPES.PAPER_VENDED) return [true];
-          const value = field.value;
-          if (value === '') return [false, this.context.intl.formatMessage(messages.fieldIsRequired)];
-          return [
-            this.props.postVendRedemptionCodeValidator(value),
-            this.context.intl.formatMessage(messages.shieldedRedemptionKeyError)
-          ];
-        },
-      },
       walletId: {
         label: this.context.intl.formatMessage(messages.walletSelectLabel),
         value: '',
-      },
-      email: {
-        label: this.context.intl.formatMessage(messages.emailLabel),
-        placeholder: this.context.intl.formatMessage(messages.emailHint),
-        value: '',
-        validators: [({ field }) => {
-          if (!this.props.showInputsForDecryptingForceVendedCertificate) return [true];
-          const email = field.value;
-          if (isEmail(email)) this.props.onEmailChanged(email);
-          return [
-            isEmail(email),
-            // this.context.intl.formatMessage(new InvalidEmailError())
-          ];
-        }]
-      },
-      adaPasscode: {
-        label: this.context.intl.formatMessage(messages.adaPasscodeLabel),
-        placeholder: this.context.intl.formatMessage(messages.adaPasscodeHint),
-        value: '',
-        validators: [({ field }) => {
-          if (!this.props.showInputsForDecryptingForceVendedCertificate) return [true];
-          const adaPasscode = field.value;
-          if (!isEmpty(adaPasscode)) this.props.onAdaPasscodeChanged(adaPasscode);
-          return [
-            !isEmpty(adaPasscode),
-            // this.context.intl.formatMessage(new FieldRequiredError())
-          ];
-        }],
-      },
-      adaAmount: {
-        label: this.context.intl.formatMessage(messages.adaAmountLabel),
-        placeholder: this.context.intl.formatMessage(messages.adaAmountHint),
-        value: '',
-        validators: [({ field }) => {
-          if (!this.props.showInputsForDecryptingForceVendedCertificate) return [true];
-          const adaAmount = field.value;
-          if (!isEmpty(adaAmount)) this.props.onAdaAmountChanged(adaAmount);
-          return [
-            !isEmpty(adaAmount),
-            // this.context.intl.formatMessage(new FieldRequiredError())
-          ];
-        }],
       },
       spendingPassword: {
         type: 'password',
@@ -349,20 +271,6 @@ export default class RegularAdaRedemption extends Component<Props> {
           }
           return [true];
         }],
-      },
-      decryptionKey: {
-        label: this.context.intl.formatMessage(messages.decryptionKeyLabel),
-        placeholder: this.context.intl.formatMessage(messages.decryptionKeyHint),
-        value: '',
-        validators: ({ field }) => {
-          if (!this.props.showInputForDecryptionKey) return [true];
-          const decryptionKey = field.value;
-          if (!isEmpty(decryptionKey)) this.props.onDecryptionKeyChanged(decryptionKey);
-          return [
-            !isEmpty(decryptionKey),
-            // this.context.intl.formatMessage(new FieldRequiredError())
-          ];
-        },
       },
     }
   }, {
@@ -394,15 +302,8 @@ export default class RegularAdaRedemption extends Component<Props> {
 
     // We can not user form.reset() call here as it would reset selected walletId
     // which is a bad UX since we are calling resetForm on certificate add/remove
-    form.$('spendingPassword').reset();
-    form.$('adaAmount').reset();
-    form.$('adaPasscode').reset();
     form.$('certificate').reset();
-    form.$('email').reset();
-    form.$('passPhrase').reset();
     form.$('redemptionKey').reset();
-    form.$('shieldedRedemptionKey').reset();
-    form.$('decryptionKey').reset();
 
     form.showErrors(false);
   };
@@ -419,21 +320,13 @@ export default class RegularAdaRedemption extends Component<Props> {
     const {
       wallets, isCertificateSelected, isCertificateEncrypted,
       isSubmitting, onCertificateSelected, redemptionCode,
-      onRedemptionCodeChanged, onRemoveCertificate, onChooseRedemptionType,
-      isCertificateInvalid, redemptionType, showInputsForDecryptingForceVendedCertificate,
-      showPassPhraseWidget, isRedemptionDisclaimerAccepted, onAcceptRedemptionDisclaimer, error,
-      getSelectedWallet, suggestedMnemonics, showInputForDecryptionKey,
+      onRedemptionCodeChanged, onRemoveCertificate,
+      isCertificateInvalid, getSelectedWallet
     } = this.props;
     const certificateField = form.$('certificate');
-    const passPhraseField = form.$('passPhrase');
     const redemptionKeyField = form.$('redemptionKey');
-    const shieldedRedemptionKeyField = form.$('shieldedRedemptionKey');
     const walletId = form.$('walletId');
-    const emailField = form.$('email');
-    const adaPasscodeField = form.$('adaPasscode');
-    const adaAmountField = form.$('adaAmount');
     const spendingPasswordField = form.$('spendingPassword');
-    const decryptionKeyField = form.$('decryptionKey');
     const componentClasses = classnames([
       styles.component,
       isSubmitting ? styles.isSubmitting : null
@@ -442,58 +335,14 @@ export default class RegularAdaRedemption extends Component<Props> {
     const selectedWallet = getSelectedWallet(walletId.value);
     const walletHasPassword = selectedWallet.hasPassword;
 
-    const showUploadWidget = redemptionType !== ADA_REDEMPTION_TYPES.PAPER_VENDED;
-    const isRecovery = (
-      redemptionType === ADA_REDEMPTION_TYPES.RECOVERY_REGULAR ||
-      redemptionType === ADA_REDEMPTION_TYPES.RECOVERY_FORCE_VENDED
-    );
+    const isRecovery = true;
 
     const passwordSubmittable = !walletHasPassword || spendingPasswordField.value !== '';
 
-    let canSubmit = false;
-    if ((
-      redemptionType === ADA_REDEMPTION_TYPES.REGULAR ||
-      redemptionType === ADA_REDEMPTION_TYPES.RECOVERY_REGULAR) &&
-      redemptionCode !== '' &&
-      passwordSubmittable
-    ) canSubmit = true;
-    if ((
-      redemptionType === ADA_REDEMPTION_TYPES.FORCE_VENDED ||
-      redemptionType === ADA_REDEMPTION_TYPES.RECOVERY_FORCE_VENDED) &&
-      redemptionCode !== '' &&
-      passwordSubmittable
-    ) canSubmit = true;
-    if (
-      redemptionType === ADA_REDEMPTION_TYPES.PAPER_VENDED &&
-      shieldedRedemptionKeyField.isDirty &&
-      passPhraseField.isDirty &&
-      passwordSubmittable
-    ) canSubmit = true;
+    const canSubmit = passwordSubmittable;
 
-    let instructionMessage = '';
-    let instructionValues = {};
-    switch (redemptionType) {
-      case ADA_REDEMPTION_TYPES.REGULAR:
-        instructionMessage = messages.instructionsRegular;
-        instructionValues = { adaRedemptionPassphraseLength: ADA_REDEMPTION_PASSPHRASE_LENGTH };
-        break;
-      case ADA_REDEMPTION_TYPES.FORCE_VENDED:
-        instructionMessage = messages.instructionsForceVended;
-        break;
-      case ADA_REDEMPTION_TYPES.PAPER_VENDED:
-        instructionMessage = messages.instructionsPaperVended;
-        instructionValues = { adaRedemptionPassphraseLength: ADA_REDEMPTION_PASSPHRASE_LENGTH };
-        break;
-      case ADA_REDEMPTION_TYPES.RECOVERY_REGULAR:
-        instructionMessage = messages.instructionsRecoveryRegular;
-        instructionValues = { adaRedemptionPassphraseLength: ADA_REDEMPTION_PASSPHRASE_LENGTH };
-        break;
-      case ADA_REDEMPTION_TYPES.RECOVERY_FORCE_VENDED:
-        instructionMessage = messages.instructionsRecoveryForceVended;
-        break;
-      default:
-        instructionMessage = messages.instructionsRegular;
-    }
+    const instructionMessage = messages.instructionsRegular;
+    const instructionValues = { adaRedemptionPassphraseLength: ADA_REDEMPTION_PASSPHRASE_LENGTH };
 
     const submitButtonClasses = classnames([
       'primary',
@@ -514,11 +363,49 @@ export default class RegularAdaRedemption extends Component<Props> {
 
           <div className={styles.redemption}>
             <div className={styles.inputs}>
+              <Input
+                onKeyPress={submitOnEnter.bind(this, submit)}
+                className="redemption-key"
+                {...redemptionKeyField.bind()}
+                placeholder={
+                  intl.formatMessage(messages[
+                    isRecovery ? 'recoveryRedemptionKeyHint' : 'redemptionKeyHint'
+                  ])
+                }
+                value={redemptionCode}
+                onChange={(value) => {
+                  onRedemptionCodeChanged(value);
+                  redemptionKeyField.onChange(value);
+                }}
+                disabled={isRecovery || isCertificateSelected}
+                error={redemptionKeyField.error}
+                skin={<InputSkin />}
+              />
+
               <Select
                 className={styles.walletSelect}
                 options={[]}
                 {...walletId.bind()}
                 skin={<SelectSkin />}
+              />
+            </div>
+
+            <div className={styles.certificate}>
+              <AdaCertificateUploadWidget
+                {...certificateField.bind()}
+                selectedFile={certificateField.value}
+                onFileSelected={(file) => {
+                  resetForm();
+                  onCertificateSelected(file);
+                  certificateField.set(file);
+                }}
+                isCertificateEncrypted={isCertificateEncrypted}
+                isCertificateSelected={isCertificateSelected}
+                isCertificateInvalid={isCertificateInvalid}
+                onRemoveCertificate={() => {
+                  resetForm();
+                  onRemoveCertificate();
+                }}
               />
             </div>
           </div>
