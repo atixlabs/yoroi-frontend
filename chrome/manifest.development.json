@@ -17,7 +17,8 @@
   "permissions": [
     "tabs",
     "storage",
-    "*://connect.trezor.io/*"
+    "*://connect.trezor.io/*",
+    "http://localhost/*"
   ],
   "content_scripts": [
     {

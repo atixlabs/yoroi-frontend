@@ -1,8 +1,10 @@
 // @flow
-import pdfjsLib from 'pdfjs-dist';
+import pdfjsLib from 'pdfjs-dist/webpack';
 import type { PDF } from '../adaTypes';
 import { decryptForceVend, decryptRecoveryRegularVend, decryptRecoveryForceVend, decryptRegularVend } from './decrypt';
 import { InvalidCertificateError, ReadFileError, DecryptionError, ParsePDFFileError, ParsePDFPageError, ParsePDFKeyError } from '../errors';
+
+// FIXME: remove permission to localhost from manifest
 
 export const getSecretKey = (parsedPDF: string): string => {
   try {
@@ -88,7 +90,7 @@ export const parsePDFFile = (file: Uint8Array): Promise<string> => (
       }
       return resolve(pagesText);
     }).catch(error => {
-      console.log('pdfParser::parsePDFFile error: ' + JSON.stringify(error));
+      console.log('pdfParser::parsePDFFile error: ', error);
       reject(new ParsePDFFileError());
     });
   })
