@@ -39,7 +39,7 @@ export default class AdaRedemptionPage extends Component<InjectedProps> {
       redeemAdaRequest, redeemPaperVendedAdaRequest,
       isCertificateEncrypted, redemptionType, error,
       isRedemptionDisclaimerAccepted, isValidRedemptionMnemonic,
-      isValidRedemptionKey, isValidPaperVendRedemptionKey
+      isValidRedemptionKey, isValidPaperVendRedemptionKey, canSubmit
     } = adaRedemption;
     const {
       chooseRedemptionType, setRedemptionCode, setCertificate, setPassPhrase, setEmail,
@@ -121,6 +121,7 @@ export default class AdaRedemptionPage extends Component<InjectedProps> {
           )}
           isRedemptionDisclaimerAccepted={isMainnet || isRedemptionDisclaimerAccepted}
           onAcceptRedemptionDisclaimer={() => acceptRedemptionDisclaimer.trigger()}
+          canSubmit={canSubmit}
         />
       </div>
     );

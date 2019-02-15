@@ -410,21 +410,12 @@ export default class AdaRedemptionForm extends Component<Props> {
     );
 
     let canSubmit = false;
-    if ((
-      redemptionType === ADA_REDEMPTION_TYPES.REGULAR ||
-      redemptionType === ADA_REDEMPTION_TYPES.RECOVERY_REGULAR) &&
-      redemptionCode !== ''
-    ) canSubmit = true;
-    if ((
-      redemptionType === ADA_REDEMPTION_TYPES.FORCE_VENDED ||
-      redemptionType === ADA_REDEMPTION_TYPES.RECOVERY_FORCE_VENDED) &&
-      redemptionCode !== ''
-    ) canSubmit = true;
     if (
       redemptionType === ADA_REDEMPTION_TYPES.PAPER_VENDED &&
       shieldedRedemptionKeyField.isDirty &&
       passPhraseField.isDirty
     ) canSubmit = true;
+    else canSubmit = this.props.canSubmit;
 
     let instructionMessage = '';
     let instructionValues = {};

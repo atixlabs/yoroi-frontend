@@ -38,6 +38,7 @@ export default class AdaRedemptionStore extends Store {
   @observable redeemPaperVendedAdaRequest: Request<RedeemPaperVendedAdaParams> = new Request(this.api.ada.redeemPaperVendedAda);
   @observable amountRedeemed: number = 0;
   @observable showAdaRedemptionSuccessMessage: boolean = false;
+  @observable canSubmit: boolean = false;
 
   setup() {
     const actions = this.actions.ada.adaRedemption;
@@ -100,6 +101,7 @@ export default class AdaRedemptionStore extends Store {
   });
 
   _setPassPhrase = action(({ passPhrase } : { passPhrase: string }) => {
+    this.canSubmit = false;
     this.passPhrase = passPhrase;
     if (this.isValidRedemptionMnemonic(passPhrase)) this._parseCodeFromCertificate();
   });
@@ -109,21 +111,25 @@ export default class AdaRedemptionStore extends Store {
   });
 
   _setEmail = action(({ email } : { email: string }) => {
+    this.canSubmit = false;
     this.email = email;
     this._parseCodeFromCertificate();
   });
 
   _setAdaPasscode = action(({ adaPasscode } : { adaPasscode: string }) => {
+    this.canSubmit = false;
     this.adaPasscode = adaPasscode;
     this._parseCodeFromCertificate();
   });
 
   _setAdaAmount = action(({ adaAmount } : { adaAmount: string }) => {
+    this.canSubmit = false;
     this.adaAmount = adaAmount;
     this._parseCodeFromCertificate();
   });
 
   _setDecryptionKey = action(({ decryptionKey } : { decryptionKey: string }) => {
+    this.canSubmit = false;
     this.decryptionKey = decryptionKey;
     this._parseCodeFromCertificate();
   });
@@ -173,6 +179,7 @@ export default class AdaRedemptionStore extends Store {
   _onCodeParsed = action(code => {
     Logger.debug('Redemption code parsed from certificate: ' + code);
     this.redemptionCode = code;
+    this.canSubmit = true;
   });
 
   _onParseError = action((error) => {
@@ -265,6 +272,7 @@ export default class AdaRedemptionStore extends Store {
     this.redemptionCode = '';
     this.passPhrase = null;
     this.decryptionKey = null;
+    this.canSubmit = false;
   });
 
   @action _reset = () => {
